@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int           @id @default(autoincrement())
+  name        String
+  email       String        @unique
+  password    String
+  transactions Transaction[] // Relation avec les transactions
+}
+
+model Transaction {
+  id           Int                 @id @default(autoincrement())
+  date         DateTime            @default(now()) // Date de la transaction
+  type         String              // Positif ou négatif
+  value        Float               // Montant de la transaction
+  userId       Int                 // Clé étrangère vers l'utilisateur
+  user         User                @relation(fields: [userId], references: [id])
+  categoryId   Int?                // Clé étrangère vers la catégorie
+  category     TransactionCategory? @relation(fields: [categoryId], references: [id])
+}
+
+model TransactionCategory {
+  id           Int           @id @default(autoincrement())
+  name         String        // Nom de la catégorie
+  type         String        // Positif ou négatif
+  transactions Transaction[] // Transactions associées à cette catégorie
+}
