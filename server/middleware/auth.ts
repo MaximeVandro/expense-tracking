@@ -1,6 +1,9 @@
 import jwt from 'jsonwebtoken'
+import {PrismaClient} from "@prisma/client";
 
-export default defineEventHandler((event) => {
+const prisma = new PrismaClient()
+
+export default defineEventHandler( async (event) => {
     const path = event.node.req.url
 
     // Appliquer uniquement aux routes API
@@ -27,7 +30,17 @@ export default defineEventHandler((event) => {
     }
 
     try {
-        event.context.user = jwt.verify(token, process.env.JWT_SECRET)
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
+        const user = await prisma.user.findUnique({
+            where: { email: decoded.email },
+        })
+        if (!user) {
+            throw createError({
+                statusCode: 404,
+                statusMessage: 'Utilisateur non trouvé',
+            })
+        }
+        event.context.user = user
     } catch (err) {
         throw createError({
             statusCode: 401,

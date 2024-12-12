@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
 
     try {
         const whereClause = type
-            ? { type: type.toLowerCase() } // Filtre par type si spécifié
+            ? { type: type } // Filtre par type si spécifié
             : {}
 
         const categories = await prisma.transactionCategory.findMany({

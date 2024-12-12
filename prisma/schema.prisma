@@ -25,16 +25,18 @@ model Transaction {
   id           Int                 @id @default(autoincrement())
   date         DateTime            @default(now()) // Date de la transaction
   type         String              // Positif ou négatif
-  value        Float               // Montant de la transaction
-  userId       Int                 // Clé étrangère vers l'utilisateur
+  value        Float
+  description  String?
+  userId       Int
   user         User                @relation(fields: [userId], references: [id])
-  categoryId   Int?                // Clé étrangère vers la catégorie
+  categoryId   Int?
   category     TransactionCategory? @relation(fields: [categoryId], references: [id])
 }
 
 model TransactionCategory {
   id           Int           @id @default(autoincrement())
-  name         String        // Nom de la catégorie
-  type         String        // Positif ou négatif
-  transactions Transaction[] // Transactions associées à cette catégorie
+  name         String
+  type         String
+  couleur      String
+  transactions Transaction[]
 }

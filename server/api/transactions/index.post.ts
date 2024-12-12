@@ -3,7 +3,6 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 export default defineEventHandler(async (event) => {
-    // Vérifier si l'utilisateur est authentifié
     const user = event.context.user
     if (!user) {
         throw createError({
@@ -12,12 +11,9 @@ export default defineEventHandler(async (event) => {
         })
     }
 
-    // Lire les données du corps de la requête
     const body = await readBody(event)
 
-    // Valider les données requises
-    const { date, type, value, categoryId } = body
-
+    const { date, type, value, categoryId, description } = body
     if (!type || !value || !date) {
         throw createError({
             statusCode: 400,
@@ -25,12 +21,12 @@ export default defineEventHandler(async (event) => {
         })
     }
 
-    // Ajouter la transaction dans la base de données
     try {
         const transaction = await prisma.transaction.create({
             data: {
                 date: new Date(date),
-                type,
+                type : type,
+                description : description,
                 value: parseFloat(value), // Assurez-vous que value est bien un nombre
                 userId: user.id, // Lier la transaction à l'utilisateur connecté
                 categoryId: categoryId || null, // Optionnel
@@ -40,9 +36,9 @@ export default defineEventHandler(async (event) => {
         return {
             success: true,
             data: transaction,
-        }
+        };
     } catch (error) {
-        console.error('Erreur lors de la création de la transaction:', error)
+        //console.log(`avant erreur interne, erreur : ${error}`)
         throw createError({
             statusCode: 500,
             statusMessage: 'Erreur interne du serveur',

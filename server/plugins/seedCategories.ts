@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { TransactionTypes } from '~/constants/transactionTypes'
+import { TransactionTypes } from '~/constants/TransactionTypes'
 
 const prisma = new PrismaClient()
 
@@ -15,14 +15,14 @@ export default defineNitroPlugin(async () => {
 
     // Si aucune catégorie n'existe, insérer les catégories initiales
     const categories = [
-        { name: 'Nourriture', type: TransactionTypes.NEGATIF },
-        { name: 'Transport', type: TransactionTypes.NEGATIF },
-        { name: 'Loisir', type: TransactionTypes.NEGATIF },
-        { name: 'Don', type: TransactionTypes.NEGATIF },
-        { name: 'Autre', type: TransactionTypes.NEGATIF },
-        { name: 'Salaire', type: TransactionTypes.POSITIF },
-        { name: 'Cadeau', type: TransactionTypes.POSITIF },
-        { name: 'Autre', type: TransactionTypes.POSITIF },
+        { name: 'Nourriture', type: TransactionTypes.NEGATIF, couleur: '#FF6347' },
+        { name: 'Transport', type: TransactionTypes.NEGATIF, couleur: '#FFA500' },
+        { name: 'Loisir', type: TransactionTypes.NEGATIF, couleur: '#FFD700' },
+        { name: 'Don', type: TransactionTypes.NEGATIF, couleur: '#FF69B4' },
+        { name: 'Autre', type: TransactionTypes.NEGATIF, couleur: '#A52A2A' },
+        { name: 'Salaire', type: TransactionTypes.POSITIF, couleur: '#32CD32' },
+        { name: 'Cadeau', type: TransactionTypes.POSITIF, couleur: '#1E90FF' },
+        { name: 'Autre', type: TransactionTypes.POSITIF, couleur: '#9400D3' },
     ]
 
     for (const category of categories) {

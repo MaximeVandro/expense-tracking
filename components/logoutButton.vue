@@ -10,6 +10,5 @@ const logout = () => {
   const tokenCookie = useCookie('token')
   tokenCookie.value = null
   navigateTo('/login')
-  alert('Déconnecté avec succès !')
 }
 </script>

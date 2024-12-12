@@ -105,8 +105,8 @@ const onRegister = async () => {
           },
         })
 
-        console.log('Utilisateur créé avec succès', user)
-        // Redirigez l'utilisateur ou affichez un message de succès
+
+        navigateTo('/login')
       } catch (error) {
         console.error('Erreur lors de la création de l utilisateur', error)
         alert('Impossible de créer le compte : ' + error.message)

@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import {TransactionTypes} from "~/constants/TransactionTypes";
 
 const prisma = new PrismaClient()
 
@@ -11,20 +12,18 @@ export default defineEventHandler(async (event) => {
         })
     }
 
-    // Récupérez toutes les transactions pour l'utilisateur connecté
+
     try {
-        const transactions = await prisma.transaction.findMany({
-            where: {
-                userId: user.id, // Utilisez l'ID de l'utilisateur connecté
-            },
-            include: {
-                category: true, // Inclure les informations sur la catégorie si nécessaire
-            },
-        })
+        const userDto = {
+            name : user.name,
+            email : user.email,
+        }
 
         return {
             success: true,
-            data: transactions,
+            data: {
+                user: userDto
+            },
         }
     } catch (error) {
         throw createError({

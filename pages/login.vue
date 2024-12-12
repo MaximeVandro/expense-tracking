@@ -52,7 +52,6 @@
         body: form.value,
       })
 
-      // Stocker le token dans un cookie
       const tokenCookie = useCookie('token')
       tokenCookie.value = response.token
 
