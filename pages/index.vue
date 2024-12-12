@@ -19,39 +19,10 @@
             </el-button>
           </div>
         </div>
-
-        <el-table
-            :data="transactions"
-            style="width: 100%"
-            :row-style="tableRowStyle"
-            :max-height="'calc(100vh - 220px)'"
-        >
-          <el-table-column label="Montant">
-            <template #default="{ row }">
-              <span class="transaction-value">
-                {{ row.type === TransactionTypes.NEGATIF ? '-' : '+' }}{{ row.value }}€
-              </span>
-
-            </template>
-          </el-table-column>
-          <el-table-column prop="description" label="Description" />
-          <el-table-column prop="category.name" label="Categorie" />
-          <el-table-column label="Date">
-            <template #default="{ row }">
-              {{ formatDate(row.date) }}
-            </template>
-          </el-table-column>
-          <el-table-column label="Actions" width="80">
-            <template #default="{ row }">
-              <el-button
-                  icon="Delete"
-                  circle
-                  size="small"
-                  @click="deleteTransaction(row.id)"
-              ></el-button>
-            </template>
-          </el-table-column>
-        </el-table>
+        <TransactionsTable
+            :transactions="transactions"
+            @transaction-deleted="fetchTransactions"
+        />
 
         <!-- Dialog pour ajouter une transaction -->
         <AddTransactionDialog
@@ -67,9 +38,9 @@
 import { ref, onMounted } from 'vue';
 import AddTransactionDialog from '~/components/AddTransactionDialog.vue';
 import {TransactionTypes} from "~/constants/TransactionTypes.ts";
-import MyHeader from "~/components/myHeader.vue";
+import MyHeader from "~/components/MyHeader.vue";
 import {Minus, Plus} from "@element-plus/icons-vue";
-import {ElMessage, ElMessageBox} from "element-plus";
+import {ElMessage} from "element-plus";
 
 const transactions = ref([]);
 const balance = ref(0);
@@ -82,50 +53,16 @@ const fetchTransactions = async () => {
     transactions.value = response.data.transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
     balance.value = response.data.balance
   } catch (error) {
-    console.error('Erreur lors de la récupération des transactions :', error);
+    ElMessage({
+      type: 'error',
+      message: 'Erreur lors de la récupération des transactions',
+    });
   }
 };
 
 const openModal = (type) => {
   addTransactionDialog.value?.openWithType(type);
 };
-
-const tableRowStyle = ({ row }) => {
-  if (row.type === TransactionTypes.NEGATIF) {
-    return { backgroundColor: 'rgba(255, 0, 0, 0.1)' }; // Rouge clair
-  } else if (row.type === TransactionTypes.POSITIF) {
-    return { backgroundColor: 'rgba(0, 255, 0, 0.1)' }; // Vert clair
-  }
-  return {};
-};
-
-const deleteTransaction = async (id) => {
-  try {
-    const confirm = await ElMessageBox.confirm(
-        'Êtes-vous sûr de vouloir supprimer cette transaction ?',
-        'Confirmation',
-        {
-          confirmButtonText: 'Oui',
-          cancelButtonText: 'Non',
-          type: 'warning',
-        }
-    );
-    if (confirm) {
-      await $fetch(`/api/transactions`, {
-        method: 'DELETE',
-        body: { id },
-      });
-      fetchTransactions();
-      ElMessage({
-        type: 'success',
-        message: 'Transaction supprimée avec succès !',
-      });
-    }
-  } catch (error) {
-    console.error('Erreur lors de la suppression de la transaction :', error);
-  }
-};
-
 
 onMounted(() => {
   fetchTransactions();
@@ -183,10 +120,5 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.transaction-value{
-  font-weight: bold;
-  font-size: large;
 }
 </style>

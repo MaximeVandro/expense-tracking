@@ -38,6 +38,7 @@
   
 <script setup>
   import { ref } from 'vue'
+  import {ElMessage} from "element-plus";
   
   const form = ref({
     username: '',
@@ -57,8 +58,11 @@
 
       navigateTo('/')
     } catch (error) {
+      ElMessage({
+        type: 'error',
+        message: 'Erreur lors de la connexion',
+      });
       console.error('Erreur lors de la connexion', error)
-      alert(error?.data?.message || 'Erreur lors de la connexion')
     }
   }
 </script>  
@@ -67,17 +71,17 @@
 <style scoped>
     .login-container {
         display: flex;
-        justify-content: center; /* Centre horizontalement */
-        align-items: center; /* Centre verticalement */
-        height: 100vh; /* Prend toute la hauteur de la fenêtre */
-        padding: 20px; /* Assurez-vous que le contenu respire même sur les petits écrans */
-        box-sizing: border-box; /* Empêche le dépassement des marges ou paddings */
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        padding: 20px;
+        box-sizing: border-box;
     }
 
-    /* Limiter la largeur de la carte */
+
     .login-card {
-        max-width: 400px; /* Limite la largeur */
-        width: 100%; /* S'assure qu'elle s'adapte aux petits écrans */
+        max-width: 400px;
+        width: 100%;
         padding: 20px;
     }
 </style>

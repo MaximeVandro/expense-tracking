@@ -53,6 +53,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import {ElMessage} from "element-plus";
 
 const registerForm = ref(null)
 
@@ -105,14 +106,19 @@ const onRegister = async () => {
           },
         })
 
-
         navigateTo('/login')
       } catch (error) {
         console.error('Erreur lors de la création de l utilisateur', error)
-        alert('Impossible de créer le compte : ' + error.message)
+        ElMessage({
+          type: 'error',
+          message: "Erreur lors de la création d'un compte",
+        });
       }
     } else {
-      console.error('Erreur dans le formulaire')
+      ElMessage({
+        type: 'error',
+        message: "Erreur lors de la création d'un compte",
+      });
     }
   })
 }

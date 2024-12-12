@@ -1,7 +1,8 @@
 <template>
   <el-dialog
-      title="Ajouter une Transaction"
+      :title="transactionType === TransactionTypes.POSITIF ? 'Ajouter un Revenu' : 'Ajouter une Dépense'"
       v-model="visible"
+      :close-on-click-modal="false"
       width="50%"
   >
     <el-form :model="form">
@@ -39,6 +40,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import {TransactionTypes} from "~/constants/TransactionTypes.ts";
 const visible = ref(false)
 const categories = ref([]);
 let transactionType = null;
@@ -46,10 +48,10 @@ let transactionType = null;
 const emit = defineEmits(['transaction-added']);
 
 const form = ref({
-  description: null, // Facultatif
-  value: 0,          // Par défaut 0
-  categoryId: null,  // Facultatif
-  date: new Date(),  // Par défaut date du jour
+  description: null,
+  value: 0,
+  categoryId: null,
+  date: new Date(),
 })
 
 const openWithType = async (type) => {
@@ -58,7 +60,19 @@ const openWithType = async (type) => {
   visible.value = true;
 };
 
-const close = () => (visible.value = false)
+const close = () => {
+  resetForm();
+  visible.value = false
+}
+
+const resetForm = () => {
+  form.value = {
+    description: null,
+    value: 0,
+    categoryId: null,
+    date: new Date(),
+  };
+};
 
 const submitTransaction = async () => {
   try {
@@ -79,19 +93,16 @@ const submitTransaction = async () => {
       body: JSON.stringify(requestData),
     });
 
-    // Vérification de la réponse
     const result = await response.json();
     if (!response.ok) {
       throw new Error(result.statusMessage || 'Erreur lors de l\'ajout de la transaction');
     }
 
-    // Succès
     emit('transaction-added');
     console.log('Transaction ajoutée avec succès :', result.data);
     close();
   } catch (error) {
     console.error('Erreur lors de l\'ajout de la transaction :', error.message);
-    // Gérer l'erreur, par exemple afficher une notification
   }
 };
 
