@@ -26,8 +26,8 @@ export default defineEventHandler(async (event) => {
         //Calcul du solde de l'utilisateur
         const balance = transactions.reduce((acc, transaction) => {
             return transaction.type === TransactionTypes.NEGATIF
-                ? acc - transaction.value // Soustraire pour les transactions négatives
-                : acc + transaction.value; // Ajouter pour les transactions positives
+                ? acc - transaction.value
+                : acc + transaction.value;
         }, 0);
 
         return {
